@@ -1,0 +1,34 @@
+! --- CONFIGURAÇÃO DE INTERFACES ---
+! Interface voltada para a LAN (PCs e Switch)
+interface GigabitEthernet0/0/0
+ description Interface LAN - Gateway Principal
+ ip address 192.168.1.1 255.255.255.0
+ no shutdown
+exit
+
+! Interface voltada para a Internet (Servidor Web)
+interface GigabitEthernet0/0/1
+ description Interface WAN - Conexão www.cisco.pt
+ ip address 209.165.200.226 255.255.255.224
+ no shutdown
+exit
+
+! --- CONFIGURAÇÃO DO SERVIDOR DHCP ---
+! Excluindo IPs fixos (Gateway e Impressora) para evitar conflitos
+ip dhcp excluded-address 192.168.1.1
+ip dhcp excluded-address 192.168.1.100
+
+! Criando o Pool de endereçamento para os computadores
+ip dhcp pool POOL_ADMINISTRATIVO
+ network 192.168.1.0 255.255.255.0
+ default-router 192.168.1.1
+ dns-server 209.165.200.225
+exit
+
+! --- COMANDOS DE VERIFICAÇÃO (PARA AUDITORIA) ---
+! show ip interface brief  <-- Verifica se as portas estão UP
+! show ip route            <-- Verifica as rotas conectadas
+! show ip dhcp binding     <-- Mostra quais dispositivos receberam IP (Essencial para Perícia)
+
+! Comando para salvar permanentemente
+copy running-config startup-config
